@@ -158,7 +158,7 @@ for t in usertups:
 
 conn.commit()
 
-################################################EVERYTHING WORKS ABOVE THIS LINE###########################
+
 tweet_idlist = []
 textlist = []
 user_postedlist =[]
@@ -173,16 +173,6 @@ for i in umich_tweets:
 	retweetlist.append(i['retweet_count'])
 
 
-#query = 'SELECT user_id FROM Users'      #Getting user_id values from the User table!
-
-#getlist = list(cur.execute(query))
-#idlist = [i[0] for i in getlist]
-#print(tweet_idlist)
-#print(len(tweet_idlist))
-
-
-
-
 
 listoftups = list(zip(tweet_idlist, textlist, user_idlist, time_postedlist,retweetlist))
 
@@ -195,7 +185,7 @@ conn.commit()
 
 
 
-
+################################################EVERYTHING WORKS ABOVE THIS LINE###########################
 
 
 
@@ -206,29 +196,61 @@ conn.commit()
 
 # Make a query to select all of the records in the Users database. Save the list of tuples in a variable called users_info.
 
+query  = "SELECT * FROM Users"
+users_info = list(cur.execute(query))
 # Make a query to select all of the user screen names from the database. Save a resulting list of strings (NOT tuples, the strings inside them!) in the variable screen_names. HINT: a list comprehension will make this easier to complete!
 
+query = "SELECT screen_name FROM Users"
+screen = list(cur.execute(query))
+screen_names = [i[0] for i in screen]
 
 # Make a query to select all of the tweets (full rows of tweet information) that have been retweeted more than 25 times. Save the result (a list of tuples, or an empty list) in a variable called more_than_25_rts.
+
+query = "SELECT * FROM Tweets WHERE retweets > 5"
+more_than_25_rts = list(cur.execute(query))
 
 
 
 # Make a query to select all the descriptions (descriptions only) of the users who have favorited more than 25 tweets. Access all those strings, and save them in a variable called descriptions_fav_users, which should ultimately be a list of strings.
 
+query = "SELECT description FROM Users WHERE num_favs > 5"
+description = list(cur.execute(query))
+descriptions_fav_users = [i[0] for i in description]
 
 
 # Make a query using an INNER JOIN to get a list of tuples with 2 elements in each tuple: the user screenname and the text of the tweet -- for each tweet that has been retweeted more than 50 times. Save the resulting list of tuples in a variable called joined_result.
 
-
-
+query = "SELECT screen_name, Tweets.text FROM Users INNER JOIN Tweets ON Tweets.user_id = Users.user_id WHERE Tweets.retweets > 10"  ###NOTE: there are no tweets in my database with more than 50 retweets. Ran with 10 and it worked fine!
+joined_result = list(cur.execute(query))
 
 ## Task 4 - Manipulating data with comprehensions & libraries
 
 ## Use a set comprehension to get a set of all words (combinations of characters separated by whitespace) among the descriptions in the descriptions_fav_users list. Save the resulting set in a variable called description_words.
 
+new = []
+for line in descriptions_fav_users:
+	word = line.split()
+	for i in word:
+		new.append(i)
+
+description_words = {i for i in new}
 
 
 ## Use a Counter in the collections library to find the most common character among all of the descriptions in the descriptions_fav_users list. Save that most common character in a variable called most_common_char. Break any tie alphabetically (but using a Counter will do a lot of work for you...).
+
+cnt  = collections.Counter()
+listofchars = []
+x = []
+descriptions = [i for i in new]
+for j in descriptions:
+	listofchars.append(list(j))
+for i in listofchars:
+	for j in i:
+		x.append(j)
+for letter in x:
+	cnt[letter] += 1
+most_common_char = cnt.most_common()[0][0]
+
 
 
 
@@ -236,7 +258,9 @@ conn.commit()
 # Write code to create a dictionary whose keys are Twitter screen names and whose associated values are lists of tweet texts that that user posted. You may need to make additional queries to your database! To do this, you can use, and must use at least one of: the DefaultDict container in the collections library, a dictionary comprehension, list comprehension(s). Y
 # You should save the final dictionary in a variable called twitter_info_diction.
 
-
+query = "SELECT screen_name, Tweets.text FROM Users INNER JOIN Tweets ON Tweets.user_id = Users.user_id" 
+new_joined_result = list(cur.execute(query))
+print(new_joined_result)
 
 ### IMPORTANT: MAKE SURE TO CLOSE YOUR DATABASE CONNECTION AT THE END OF THE FILE HERE SO YOU DO NOT LOCK YOUR DATABASE (it's fixable, but it's a pain). ###
 
