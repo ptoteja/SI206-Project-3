@@ -260,7 +260,18 @@ most_common_char = cnt.most_common()[0][0]
 
 query = "SELECT screen_name, Tweets.text FROM Users INNER JOIN Tweets ON Tweets.user_id = Users.user_id" 
 new_joined_result = list(cur.execute(query))
-print(new_joined_result)
+
+
+d = collections.defaultdict(list)   #Using a default dictionary
+for k, v in new_joined_result:
+	d[k].append(v)
+
+print(d)
+
+twitter_info_diction = dict(d)
+
+
+#d = {tup[0]: associatedtweets.append(tup[1]) for tup in new_joined_result}
 
 ### IMPORTANT: MAKE SURE TO CLOSE YOUR DATABASE CONNECTION AT THE END OF THE FILE HERE SO YOU DO NOT LOCK YOUR DATABASE (it's fixable, but it's a pain). ###
 
