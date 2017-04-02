@@ -266,7 +266,6 @@ d = collections.defaultdict(list)   #Using a default dictionary
 for k, v in new_joined_result:
 	d[k].append(v)
 
-print(d)
 
 twitter_info_diction = dict(d)
 
